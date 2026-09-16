@@ -12,4 +12,19 @@ jobs:
               uses: actions/checkout@v4
 
             - name: Cypress run
+              id: cypress
               uses: cypress-io/github-action@v6
+
+            - name: Enviar resultado para o Telegram
+              if: always()
+              env:
+                  TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+                  TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+                  TEST_RESULT: ${{ steps.cypress.outcome }}
+              run: |
+                  MESSAGE=$(printf 'Pipeline Cypress Qazando\nResultado dos testes: %s\nWorkflow: %s\nExecução: %s/actions/runs/%s' \
+                    "${TEST_RESULT}" "${GITHUB_WORKFLOW}" "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" "${GITHUB_RUN_ID}")
+                  curl --fail --silent --show-error \
+                    --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+                    --data-urlencode "text=${MESSAGE}" \
+                    "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage"
