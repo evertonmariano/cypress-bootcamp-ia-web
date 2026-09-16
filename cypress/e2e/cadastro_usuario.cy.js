@@ -42,7 +42,7 @@ describe('Cadastro de usuário', () => {
     cadastroUsuarioPage.cadastrar();
     // Then devo visualizar a mensagem de email inválido
     cadastroUsuarioPage.validarUrl('/register');
-    cadastroUsuarioPage.validarMensagem('O campo e-mail deve ser prenchido corretamente');
+    cadastroUsuarioPage.validarMensagem('Texto errado de proposito');
   });
 
   // CT-04 Scenario: cadastro com senha vazia
